@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'brain.dart';
 
-Brain brain=Brain();
+Brain brain = Brain();
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -18,6 +21,29 @@ class Quiz extends StatefulWidget {
 
 class _QuizState extends State<Quiz> {
   List<Icon> score = [];
+  void check(bool userAns)
+  {
+    bool correct=brain.getAnswer();
+    setState(() {
+      if (brain.isFinished() == true) {
+        Alert(
+          context: context,
+          type: AlertType.error,
+          title: "FINISHED",
+          desc: "You have reached the end of the quiz",
+        ).show();
+        sleep(Duration(seconds: 5));
+        brain.reset();
+        score = [];
+      } else
+      {if (userAns == correct)
+        score.add(Icon(Icons.check, color: Colors.green));
+      else
+        score.add(Icon(Icons.close, color: Colors.red));
+      brain.next();}
+
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,13 +64,7 @@ class _QuizState extends State<Quiz> {
             child: TextButton(
                 style: TextButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () {
-                  if (brain.getAnswer() == true) {
-                    correct();
-                  } else {
-                    wrong();
-                  }
-                  brain.next();
-
+                  check(true);
                 },
                 child: Text(
                   "True",
@@ -56,12 +76,7 @@ class _QuizState extends State<Quiz> {
             child: TextButton(
                 style: TextButton.styleFrom(backgroundColor: Colors.red),
                 onPressed: () {
-                  if (brain.getAnswer() == false) {
-                    correct();
-                  } else {
-                    wrong();
-                  }
-                  brain.next();
+                  check(false);
                 },
                 child: Text(
                   "False",
@@ -75,20 +90,5 @@ class _QuizState extends State<Quiz> {
         ],
       ),
     );
-  }
-
-  void correct() {
-    print('correct answer');
-    setState(() {
-      score.add(Icon(Icons.check, color: Colors.green));
-    });
-  }
-
-  void wrong() {
-    print('wrong answer');
-    setState(() {
-      score.add(Icon(Icons.close, color: Colors.red));
-    });
-
   }
 }
