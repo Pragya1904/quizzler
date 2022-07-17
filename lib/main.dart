@@ -21,6 +21,8 @@ class Quiz extends StatefulWidget {
 
 class _QuizState extends State<Quiz> {
   List<Icon> score = [];
+  int finalscore=0;
+  int noOfQuestions=brain.NoOfQuestions();
   void check(bool userAns)
   {
     bool correct=brain.getAnswer();
@@ -29,15 +31,16 @@ class _QuizState extends State<Quiz> {
         Alert(
           context: context,
           type: AlertType.error,
-          title: "FINISHED",
+          title: "$finalscore/$noOfQuestions",
           desc: "You have reached the end of the quiz",
         ).show();
-        sleep(Duration(seconds: 5));
         brain.reset();
         score = [];
       } else
       {if (userAns == correct)
-        score.add(Icon(Icons.check, color: Colors.green));
+       { score.add(Icon(Icons.check, color: Colors.green));
+         finalscore++;
+       }
       else
         score.add(Icon(Icons.close, color: Colors.red));
       brain.next();}
